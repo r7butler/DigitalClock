@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     static int clientWidth, clientHeight; // Client area dimensions
-    static BOOL titleVisible = TRUE;  // Initially show the title bar
+    static BOOL titleVisible = TRUE;      // Initially show the title bar
 
     switch (msg)
     {
@@ -68,10 +68,32 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
             }
             SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
         }
+        // Handle Enter Keypress
+        else if (wp == VK_RETURN)
+        {
+            DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
+            if (titleVisible)
+            {
+                SetWindowLong(hwnd, GWL_STYLE, dwStyle & ~WS_CAPTION);
+                titleVisible = FALSE;
+            }
+            SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+        }
+        // Handle Escape Keypress
+        else if (wp == VK_ESCAPE)
+        {
+            DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
+            if (!titleVisible)
+            {
+                SetWindowLong(hwnd, GWL_STYLE, dwStyle | WS_CAPTION);
+                titleVisible = TRUE;
+            }
+            SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+        }
         break;
     case WM_CREATE:
         clientHeight = 120; // Default starting height
-        clientWidth = 480; // Default starting height
+        clientWidth = 480;  // Default starting height
         hFont = CreateCustomFont(clientHeight, clientWidth);
         SetTimer(hwnd, 1, 1000, NULL);
         break;
@@ -79,9 +101,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
         clientWidth = LOWORD(lp);
         clientHeight = HIWORD(lp);
         if (hFont)
-            DeleteObject(hFont);                // Delete the old font
+            DeleteObject(hFont);                             // Delete the old font
         hFont = CreateCustomFont(clientHeight, clientWidth); // Create a new font with the appropriate size
-        InvalidateRect(hwnd, NULL, TRUE);       // Redraw window
+        InvalidateRect(hwnd, NULL, TRUE);                    // Redraw window
         break;
     case WM_PAINT:
         UpdateTime(hwnd, hFont);
@@ -102,7 +124,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 HFONT CreateCustomFont(int height, int width)
 {
-    int fontSize = max( 50, max(width / 7 , height / 2) );
+    int fontSize = max(50, max(width / 7, height / 2));
     return CreateFontW(fontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, ANSI_CHARSET,
                        OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
                        DEFAULT_PITCH | FF_DONTCARE, L"Arial");
