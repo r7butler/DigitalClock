@@ -26,6 +26,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
                               WS_OVERLAPPEDWINDOW, // Allow standard window features
                               CW_USEDEFAULT, CW_USEDEFAULT, 480, 120,
                               NULL, NULL, hInst, NULL);
+    SetWindowTextW(hwnd, L"_");
 
     if (hwnd == NULL)
     {
