@@ -53,7 +53,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
     switch (msg)
     {
     case WM_KEYDOWN:
-        if (wp == 'T')
+        if (wp == 'F')
         { // Toggle title bar visibility on 'T' key press
             DWORD dwStyle = GetWindowLong(hwnd, GWL_STYLE);
             if (titleVisible)
